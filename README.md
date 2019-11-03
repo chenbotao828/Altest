@@ -45,10 +45,10 @@ Test:
   AssertionError: (assert 'nil)
 Assert:
   AssertionError: (assert '(/= 1 1))
-  Error "除数为零": (assert '(/ 1 0) )
+  Error "divide by zero": (assert '(/ 1 0) )
 Assert-eq:
   EqualAssertionError: (assert-eq '1 '(+ 1 1))
-  Error "除数为零": '(/ 1 0) <-- (assert-eq '1 '(/ 1 0))
+  Error "divide by zero": '(/ 1 0) <-- (assert-eq '1 '(/ 1 0))
 Assert-error:
   NoError: (assert-error '(/ 1 1))
 Passed 7, Failed 6, Time 15.01 ms

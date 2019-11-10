@@ -61,12 +61,11 @@
   (if (not {altest_start_at})
     (princ (strcat "\n;; Error: \"" msg "\"\n"))
    )
-  (princ)
  )
 
 ;; AlTest
 
-(defun altest (file / start end time output passed failed)
+(defun altest (file / f start end time output passed failed file?)
 
   (defun start (x)
     (princ (strcat
@@ -122,25 +121,48 @@
             (if (/= ret nil) (princ (strcat "\n  " ret)))
            )))))
 
+  (defun file? (f)
+    (or 
+     (findfile f)
+     (findfile (strcat f ".lsp"))
+     (findfile (strcat f ".fas"))
+     (findfile (strcat f ".vlx"))
+     )
+   )
+  (setq f (strcat file "/test"))
+  
+  (if (not (file? f))
+    (setq f file)
+   )
 
-  ;; start
-  (setq {altest_start_at} (getvar "date"))
-  (setq {altest_results} nil)
-  (setq {altest_passed} 0)
-  (setq {altest_failed} 0)
-  (setq {altest_testing} "Test")
-  (start file)
-  ;; test
-  (load file)
-  ;; end
-  (output)
-  (princ "\n \n")
-  (passed)
-  (Failed)
-  (time)
-  (end)
-  (setq {altest_start_at} nil)
-  (princ))
+  (if (file? f)
+    (progn
+      ;; start
+      (setq {altest_start_at} (getvar "date"))
+      (setq {altest_results} nil)
+      (setq {altest_passed} 0)
+      (setq {altest_failed} 0)
+      (setq {altest_testing} "Test")
+      (start f)
+      ;; test
+      (load f)
+      ;; end
+      (output)
+      (princ "\n \n")
+      (passed)
+      (Failed)
+      (time)
+      (end)
+      (setq {altest_start_at} nil)
+      (setq {altest_results} nil)
+      (setq {altest_passed} nil)
+      (setq {altest_failed} nil)
+      (setq {altest_testing} nil)
+    )   
+    (*error* (strcat "FileNotExist: " f))
+  )
+  (princ)
+)
 
 (defun == (x y)
   (cond 
@@ -160,6 +182,8 @@
  )
 
 (defun altest_add_result (ret)
+  (if (= {altest_failed} nil) (setq {altest_failed} 0))
+  (if (= {altest_passed} nil) (setq {altest_passed} 0))
   (cond 
    ((== nil {altest_results})
     (set '{altest_results} (list (cons {altest_testing} (list ret))))
@@ -191,8 +215,10 @@
       (if (== catchit nil)
           (setq ret (strcat "AssertionError: (assert '" (s2str statement) ")"))
           nil))
-  (altest_add_result ret)
-  (princ))
+  (if {altest_testing} (altest_add_result ret)
+    (princ ret))
+  (princ)
+  )
 
 (defun assert-eq (sa sb / statement ca cb ret)
   (setq statement 
@@ -234,7 +260,8 @@
                         (s2str sb)
                         ")")))
         (t nil))
-  (altest_add_result ret)
+  (if {altest_testing} (altest_add_result ret)
+    (princ ret))
   (princ))
 
 (defun assert-error (statement / ret)
@@ -242,5 +269,6 @@
   (if (not {altest_error_occured})
       (setq ret (strcat "No Error: (assert-error '"
                         (s2str statement) ")")))
-  (altest_add_result ret)
+  (if {altest_testing} (altest_add_result ret)
+    (princ ret))
   (princ))

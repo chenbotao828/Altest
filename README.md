@@ -36,7 +36,9 @@ Unit test for autolisp
 
 ## In CAD
 
-`(altest "altest/test")`
+`(altest "altest/test")` or `(altest "altest")` 
+
+"test" (end with ".lsp") is default test file in package
 
 ```commonlisp
 --------- AlTest Start: altest/test ---------
@@ -54,4 +56,3 @@ Assert-error:
 Passed 7, Failed 6, Time 15.01 ms
 --------------------- End ---------------------
 ```
-

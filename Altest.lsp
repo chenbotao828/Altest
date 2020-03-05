@@ -1,14 +1,12 @@
 ;; error handling
 (defun instance_error (msg)
-  (list (cons 'class 'error)
-        (cons 'parent 'base_error)
+  (list (cons 'parent 'error)
         (cons 'msg msg)))
 
 (defun error? (x)
   (if (and
         (al? x)
-        (= (cdr (assoc 'class x)) 'error))
-      
+        (= (cdr (assoc 'parent x)) 'error))
       t nil))
 
 (defun try (x / catchit)

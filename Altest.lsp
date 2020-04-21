@@ -332,9 +332,13 @@
 ;; 1st round eval expr for 1, 10, 100 ... times until time is above 10 ms
 
 (defun timeit (expr / start ed mms dt loop dtl ft n sort_list) 
-  (setq mms (strcat (vl-list->string '(166 204)) "s")
+  (if (<= {ver_year} 2020)
+   (setq mms (strcat (vl-list->string '(166 204)) "s")
         +-  (vl-list->string '(161 192))
   )
+  (setq mms "¦Ìs"
+        +-  "¡À"
+  ))
   (defun ft (x) 
     (cond 
       ((>= x 1000) (strcat (rtos (/ x 1000.0) 2 2) " s"))
